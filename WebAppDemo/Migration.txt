@@ -1,0 +1,14 @@
+﻿Add-Migration MyFirstMigration
+Add-Migration MyFirstMigration -StartupProject OAuth.Resources.Api
+Add-Migration MyFirstMigration -Project OAuth.Resources.Api -StartupProject OAuth.Resources.Api
+
+Update-Database -StartupProject OAuth.Resources.Api
+Update-Database -Verbose
+Update-Database -Debug
+Update-Database -Project OAuth.Resources.Api -StartupProject OAuth.Resources.Api
+Update-Database -Migration -StartupProject OAuth.Resources.Api
+
+Script-Migration -From MyFirstMigration -To FileName1000Migration
+Script-Migration -Project OAuth.Resources.Api -StartupProject OAuth.Resources.Api
+
+Remove-Migration -Project OAuth.Resources.Api -StartupProject OAuth.Resources.Api
