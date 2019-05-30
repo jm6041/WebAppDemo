@@ -3,14 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppDemo", "WebAppDemo\WebAppDemo.csproj", "{3C1F8ED6-5BB5-4D7F-8B66-41EF3942921D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learn.Services", "Learn.Services\Learn.Services.csproj", "{BED388AE-11DC-4692-85A6-D3072696C484}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learn.Services.Abstractions", "Learn.Services.Abstractions\Learn.Services.Abstractions.csproj", "{E6CB2BD0-0AA6-4DA8-AE2B-CED3A9733EF0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learn.Common", "Learn.Common\Learn.Common.csproj", "{D631A648-BE3D-446B-8DFF-F5E4A721E5F0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppClients", "WebAppClients\WebAppClients.csproj", "{584F8F9B-7A3D-4E28-9C5F-3CD3ABBE98A5}"
 EndProject
 Global
