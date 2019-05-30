@@ -4,163 +4,239 @@
 // </auto-generated>
 //----------------------
 
-using System.Net.Http;
-
-namespace Learn.Clients
+namespace MyNamespace
 {
 #pragma warning disable
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.3.1.0 (NJsonSchema v9.14.1.0 (Newtonsoft.Json v11.0.0.0))")]
-    public interface IGoodsController
+    public partial class GoodsClient
     {
-        System.Threading.Tasks.Task<SwaggerResponse<PagedResultOfGoodsDto>> GetGoodsAsync(GoodsQueryDto queryDto, System.Threading.CancellationToken cancellationToken);
+        private string _baseUrl = "https://localhost:29092";
+        private System.Net.Http.HttpClient _httpClient;
+        private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
 
-        System.Threading.Tasks.Task<SwaggerResponse<GoodsDto>> GetGoodsByIdAsync(System.Guid? id = null, System.Threading.CancellationToken cancellationToken);
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.3.1.0 (NJsonSchema v9.14.1.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class GoodsController : Microsoft.AspNetCore.Mvc.ControllerBase
-    {
-        private IGoodsController _implementation;
-
-        public GoodsController(IGoodsController implementation)
+        public GoodsClient(System.Net.Http.HttpClient httpClient)
         {
-            _implementation = implementation;
+            _httpClient = httpClient;
+            _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(() =>
+            {
+                var settings = new Newtonsoft.Json.JsonSerializerSettings();
+                UpdateJsonSerializerSettings(settings);
+                return settings;
+            });
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Goods/GetGoods")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> GetGoods([Microsoft.AspNetCore.Mvc.FromBody] [Microsoft.AspNetCore.Mvc.ModelBinding.BindRequired] GoodsQueryDto queryDto, System.Threading.CancellationToken cancellationToken)
+        public string BaseUrl
         {
-            var result = await _implementation.GetGoodsAsync(queryDto, cancellationToken).ConfigureAwait(false);
-
-            var status = (System.Net.HttpStatusCode)result.StatusCode;
-            HttpResponseMessage response = Request.CreateResponse(status, result.Result);
-
-            foreach (var header in result.Headers)
-                response.Headers.Add(header.Key, header.Value);
-
-            return response;
+            get { return _baseUrl; }
+            set { _baseUrl = value; }
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Goods/GetGoodsById")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> GetGoodsById(System.Guid? id = null, System.Threading.CancellationToken cancellationToken)
+        protected Newtonsoft.Json.JsonSerializerSettings JsonSerializerSettings { get { return _settings.Value; } }
+
+        partial void UpdateJsonSerializerSettings(Newtonsoft.Json.JsonSerializerSettings settings);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, string url);
+        partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
+        partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
+
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<PagedResultOfGoodsDto> GetGoodsAsync(GoodsQueryDto queryDto)
         {
-            var result = await _implementation.GetGoodsByIdAsync(id, cancellationToken).ConfigureAwait(false);
-
-            var status = (System.Net.HttpStatusCode)result.StatusCode;
-            HttpResponseMessage response = Request.CreateResponse(status, result.Result);
-
-            foreach (var header in result.Headers)
-                response.Headers.Add(header.Key, header.Value);
-
-            return response;
+            return GetGoodsAsync(queryDto, System.Threading.CancellationToken.None);
         }
 
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.3.1.0 (NJsonSchema v9.14.1.0 (Newtonsoft.Json v11.0.0.0))")]
-    public interface IValuesController
-    {
-        System.Threading.Tasks.Task<SwaggerResponse<System.Collections.Generic.ICollection<string>>> GetAllAsync(System.Threading.CancellationToken cancellationToken);
-
-        System.Threading.Tasks.Task<SwaggerResponse> PostAsync(string value, System.Threading.CancellationToken cancellationToken);
-
-        System.Threading.Tasks.Task<SwaggerResponse<string>> GetAsync(int id, System.Threading.CancellationToken cancellationToken);
-
-        System.Threading.Tasks.Task<SwaggerResponse> PutAsync(int id, string value, System.Threading.CancellationToken cancellationToken);
-
-        System.Threading.Tasks.Task<SwaggerResponse> DeleteAsync(int id, System.Threading.CancellationToken cancellationToken);
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.3.1.0 (NJsonSchema v9.14.1.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class ValuesController : Microsoft.AspNetCore.Mvc.ControllerBase
-    {
-        private IValuesController _implementation;
-
-        public ValuesController(IValuesController implementation)
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task<PagedResultOfGoodsDto> GetGoodsAsync(GoodsQueryDto queryDto, System.Threading.CancellationToken cancellationToken)
         {
-            _implementation = implementation;
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Goods/GetGoods");
+
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(queryDto, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = default(PagedResultOfGoodsDto);
+                            try
+                            {
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<PagedResultOfGoodsDto>(responseData_, _settings.Value);
+                                return result_;
+                            }
+                            catch (System.Exception exception_)
+                            {
+                                throw new SwaggerException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
+                            }
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+
+                        return default(PagedResultOfGoodsDto);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Values")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> GetAll(System.Threading.CancellationToken cancellationToken)
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<GoodsDto> GetGoodsByIdAsync(System.Guid? id)
         {
-            var result = await _implementation.GetAllAsync(cancellationToken).ConfigureAwait(false);
-
-            var status = (System.Net.HttpStatusCode)result.StatusCode;
-            HttpResponseMessage response = Request.CreateResponse(status, result.Result);
-
-            foreach (var header in result.Headers)
-                response.Headers.Add(header.Key, header.Value);
-
-            return response;
+            return GetGoodsByIdAsync(id, System.Threading.CancellationToken.None);
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpPost, Microsoft.AspNetCore.Mvc.Route("api/Values")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> Post([Microsoft.AspNetCore.Mvc.FromBody] [Microsoft.AspNetCore.Mvc.ModelBinding.BindRequired] string value, System.Threading.CancellationToken cancellationToken)
+        /// <exception cref="SwaggerException">A server side error occurred.</exception>
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async System.Threading.Tasks.Task<GoodsDto> GetGoodsByIdAsync(System.Guid? id, System.Threading.CancellationToken cancellationToken)
         {
-            var result = await _implementation.PostAsync(value, cancellationToken).ConfigureAwait(false);
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/api/Goods/GetGoodsById?");
+            if (id != null)
+            {
+                urlBuilder_.Append("id=").Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
 
-            var status = (System.Net.HttpStatusCode)result.StatusCode;
-            HttpResponseMessage response = Request.CreateResponse(status);
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
-            foreach (var header in result.Headers)
-                response.Headers.Add(header.Key, header.Value);
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
 
-            return response;
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            var result_ = default(GoodsDto);
+                            try
+                            {
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<GoodsDto>(responseData_, _settings.Value);
+                                return result_;
+                            }
+                            catch (System.Exception exception_)
+                            {
+                                throw new SwaggerException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
+                            }
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new SwaggerException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+
+                        return default(GoodsDto);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpGet, Microsoft.AspNetCore.Mvc.Route("api/Values/{id}")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> Get([Microsoft.AspNetCore.Mvc.ModelBinding.BindRequired] int id, System.Threading.CancellationToken cancellationToken)
+        private string ConvertToString(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            var result = await _implementation.GetAsync(id, cancellationToken).ConfigureAwait(false);
+            if (value is System.Enum)
+            {
+                string name = System.Enum.GetName(value.GetType(), value);
+                if (name != null)
+                {
+                    var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
+                    if (field != null)
+                    {
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute))
+                            as System.Runtime.Serialization.EnumMemberAttribute;
+                        if (attribute != null)
+                        {
+                            return attribute.Value != null ? attribute.Value : name;
+                        }
+                    }
+                }
+            }
+            else if (value is bool)
+            {
+                return System.Convert.ToString(value, cultureInfo).ToLowerInvariant();
+            }
+            else if (value is byte[])
+            {
+                return System.Convert.ToBase64String((byte[])value);
+            }
+            else if (value != null && value.GetType().IsArray)
+            {
+                var array = System.Linq.Enumerable.OfType<object>((System.Array)value);
+                return string.Join(",", System.Linq.Enumerable.Select(array, o => ConvertToString(o, cultureInfo)));
+            }
 
-            var status = (System.Net.HttpStatusCode)result.StatusCode;
-            HttpResponseMessage response = Request.CreateResponse(status, result.Result);
-
-            foreach (var header in result.Headers)
-                response.Headers.Add(header.Key, header.Value);
-
-            return response;
+            return System.Convert.ToString(value, cultureInfo);
         }
-
-        [Microsoft.AspNetCore.Mvc.HttpPut, Microsoft.AspNetCore.Mvc.Route("api/Values/{id}")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> Put([Microsoft.AspNetCore.Mvc.ModelBinding.BindRequired] int id, [Microsoft.AspNetCore.Mvc.FromBody] [Microsoft.AspNetCore.Mvc.ModelBinding.BindRequired] string value, System.Threading.CancellationToken cancellationToken)
-        {
-            var result = await _implementation.PutAsync(id, value, cancellationToken).ConfigureAwait(false);
-
-            var status = (System.Net.HttpStatusCode)result.StatusCode;
-            HttpResponseMessage response = Request.CreateResponse(status);
-
-            foreach (var header in result.Headers)
-                response.Headers.Add(header.Key, header.Value);
-
-            return response;
-        }
-
-        [Microsoft.AspNetCore.Mvc.HttpDelete, Microsoft.AspNetCore.Mvc.Route("api/Values/{id}")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> Delete([Microsoft.AspNetCore.Mvc.ModelBinding.BindRequired] int id, System.Threading.CancellationToken cancellationToken)
-        {
-            var result = await _implementation.DeleteAsync(id, cancellationToken).ConfigureAwait(false);
-
-            var status = (System.Net.HttpStatusCode)result.StatusCode;
-            HttpResponseMessage response = Request.CreateResponse(status);
-
-            foreach (var header in result.Headers)
-                response.Headers.Add(header.Key, header.Value);
-
-            return response;
-        }
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.14.1.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class PagedResultOfGoodsDto
     {
         [Newtonsoft.Json.JsonProperty("result", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<GoodsDto> Result { get; set; }
+        public System.Collections.Generic.ICollection<GoodsDto> Result { get; set; }
 
         [Newtonsoft.Json.JsonProperty("toltalCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int ToltalCount { get; set; }
@@ -308,7 +384,7 @@ namespace Learn.Clients
         public int PageSize { get; set; }
 
         [Newtonsoft.Json.JsonProperty("orderings", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<Ordering> Orderings { get; set; }
+        public System.Collections.Generic.ICollection<Ordering> Orderings { get; set; }
 
         public string ToJson()
         {
@@ -353,26 +429,35 @@ namespace Learn.Clients
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.3.1.0 (NJsonSchema v9.14.1.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class SwaggerResponse
+    public partial class SwaggerException : System.Exception
     {
         public int StatusCode { get; private set; }
 
+        public string Response { get; private set; }
+
         public System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
 
-        public SwaggerResponse(int statusCode, System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>> headers)
+        public SwaggerException(string message, int statusCode, string response, System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException)
+            : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + response.Substring(0, response.Length >= 512 ? 512 : response.Length), innerException)
         {
             StatusCode = statusCode;
+            Response = response;
             Headers = headers;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("HTTP Response: \n\n{0}\n\n{1}", Response, base.ToString());
         }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "12.3.1.0 (NJsonSchema v9.14.1.0 (Newtonsoft.Json v11.0.0.0))")]
-    public partial class SwaggerResponse<TResult> : SwaggerResponse
+    public partial class SwaggerException<TResult> : SwaggerException
     {
         public TResult Result { get; private set; }
 
-        public SwaggerResponse(int statusCode, System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result)
-            : base(statusCode, headers)
+        public SwaggerException(string message, int statusCode, string response, System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException)
+            : base(message, statusCode, response, headers, innerException)
         {
             Result = result;
         }
