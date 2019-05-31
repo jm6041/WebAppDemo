@@ -16,10 +16,12 @@ namespace System.Linq
         /// <summary>
         /// 升序
         /// </summary>
+        [EnumMember]
         Asc = 0,
         /// <summary>
         /// 降序
         /// </summary>
+        [EnumMember]
         Desc = 1
     }
     /// <summary>

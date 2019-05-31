@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="a85a69b4-a37d-4a63-b73e-267f729d9406" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://127.0.0.1:43299/Goods" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="Goods.xsd" MetadataType="Schema" ID="1b100528-bc4c-4726-8819-683d15b487af" SourceId="1" SourceUrl="http://127.0.0.1:43299/Goods?xsd=xsd4" />
+    <MetadataFile FileName="Goods1.xsd" MetadataType="Schema" ID="6571633d-ccd3-44bd-9a0e-70955489f96a" SourceId="1" SourceUrl="http://127.0.0.1:43299/Goods?xsd=xsd3" />
+    <MetadataFile FileName="Goods.disco" MetadataType="Disco" ID="5f2460b1-b4ec-40d5-9467-579a83fd32c2" SourceId="1" SourceUrl="http://127.0.0.1:43299/Goods?disco" />
+    <MetadataFile FileName="GoodsOutService.wsdl" MetadataType="Wsdl" ID="9cb59960-77ab-4e32-847b-051c221eae4f" SourceId="1" SourceUrl="http://127.0.0.1:43299/Goods?wsdl" />
+    <MetadataFile FileName="Goods.wsdl" MetadataType="Wsdl" ID="fba69939-69ec-4bf3-8ca6-47a8183038c6" SourceId="1" SourceUrl="http://127.0.0.1:43299/Goods?wsdl=wsdl0" />
+    <MetadataFile FileName="Goods2.xsd" MetadataType="Schema" ID="1bd32de8-25ef-4d1e-b206-374c9cb4f665" SourceId="1" SourceUrl="http://127.0.0.1:43299/Goods?xsd=xsd0" />
+    <MetadataFile FileName="Goods3.xsd" MetadataType="Schema" ID="94e177ea-4172-4908-9e73-15ac8e02041f" SourceId="1" SourceUrl="http://127.0.0.1:43299/Goods?xsd=xsd1" />
+    <MetadataFile FileName="Goods4.xsd" MetadataType="Schema" ID="53e2eaa8-5db9-4662-9247-39a99459e77c" SourceId="1" SourceUrl="http://127.0.0.1:43299/Goods?xsd=xsd2" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

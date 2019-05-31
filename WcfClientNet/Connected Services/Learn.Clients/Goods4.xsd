@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/Learn.Services" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Learn.Services" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://127.0.0.1:43299/Goods?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Linq" />
+  <xs:import schemaLocation="http://127.0.0.1:43299/Goods?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/System" />
+  <xs:import schemaLocation="http://127.0.0.1:43299/Goods?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="GoodsQueryDto">
+    <xs:complexContent mixed="false">
+      <xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/System.Linq" base="q1:PageParameter">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PriceMin" nillable="true" type="xs:double" />
+          <xs:element minOccurs="0" name="PriceMax" nillable="true" type="xs:double" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GoodsQueryDto" nillable="true" type="tns:GoodsQueryDto" />
+  <xs:complexType name="ArrayOfGoodsDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="GoodsDto" nillable="true" type="tns:GoodsDto" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfGoodsDto" nillable="true" type="tns:ArrayOfGoodsDto" />
+  <xs:complexType name="GoodsDto">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:GoodsInDto">
+        <xs:sequence>
+          <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="CreateTime" type="q2:DateTimeOffset" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="GoodsDto" nillable="true" type="tns:GoodsDto" />
+  <xs:complexType name="GoodsInDto">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" nillable="true" type="ser:guid" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Pricing" type="tns:PricingWay" />
+      <xs:element minOccurs="0" name="Words" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Days" nillable="true" type="xs:double" />
+      <xs:element minOccurs="0" name="InitPrice" type="xs:double" />
+      <xs:element minOccurs="0" name="Price" type="xs:double" />
+      <xs:element minOccurs="0" name="Currency" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CurrencySymbol" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="StartTime" type="q3:DateTimeOffset" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="EndTime" type="q4:DateTimeOffset" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GoodsInDto" nillable="true" type="tns:GoodsInDto" />
+  <xs:simpleType name="PricingWay">
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+  <xs:element name="PricingWay" nillable="true" type="tns:PricingWay" />
+</xs:schema>

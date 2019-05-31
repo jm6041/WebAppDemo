@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://www.jmlearn.com/" elementFormDefault="qualified" targetNamespace="http://www.jmlearn.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://127.0.0.1:43299/Goods?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Learn.Services" />
+  <xs:import schemaLocation="http://127.0.0.1:43299/Goods?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Linq" />
+  <xs:import schemaLocation="http://127.0.0.1:43299/Goods?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:element name="GetGoods">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Learn.Services" minOccurs="0" name="queryDto" nillable="true" type="q1:GoodsQueryDto" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGoodsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/System.Linq" minOccurs="0" name="GetGoodsResult" nillable="true" type="q2:PagedResultOfGoodsDtoPd4vD4jW" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGoodsById">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="id" type="q3:guid" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetGoodsByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Learn.Services" minOccurs="0" name="GetGoodsByIdResult" nillable="true" type="q4:GoodsDto" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

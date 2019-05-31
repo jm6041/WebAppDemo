@@ -149,6 +149,7 @@ namespace Learn.Services
         /// 是否有折扣
         /// </summary>
         [DisplayName("是否有折扣")]
+        [DataMember(Order = 13)]
         public bool HasDiscount
         {
             get
@@ -163,19 +164,22 @@ namespace Learn.Services
         /// <summary>
         /// 开始时间
         /// </summary>
+        [DataMember(Order = 14)]
         public long StartTimestamp => StartTime.ToUnixTimeMilliseconds();
         /// <summary>
         /// 结束时间
         /// </summary>
+        [DataMember(Order = 15)]
         public long EndTimestamp => EndTime.ToUnixTimeMilliseconds();
         /// <summary>
         /// 创建时间
         /// </summary>
-        [DataMember(Order = 15)]
+        [DataMember(Order = 16)]
         public DateTimeOffset CreateTime { get; set; }
         /// <summary>
         /// 创建时间
         /// </summary>
+        [DataMember(Order = 17)]
         public long CreateTimestamp => CreateTime.ToUnixTimeMilliseconds();
     }
 }
