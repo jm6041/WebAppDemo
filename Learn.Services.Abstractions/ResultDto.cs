@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace Learn.Services
 {
@@ -9,6 +10,7 @@ namespace Learn.Services
     /// 可以作为验证的结果
     /// </summary>
     [Serializable]
+    [DataContract]
     public class ResultDto
     {
         /// <summary>
@@ -18,6 +20,7 @@ namespace Learn.Services
         /// <summary>
         /// 是否成功
         /// </summary>
+        [DataMember(Order = 1)]
         public bool IsSuccess => !_errors.Any();
         /// <summary>
         /// 添加异常
@@ -78,7 +81,7 @@ namespace Learn.Services
             foreach (string error in errors)
             {
                 //val.Add(error);
-                AddError(error,ref val);
+                AddError(error, ref val);
             }
         }
 
@@ -138,6 +141,7 @@ namespace Learn.Services
         /// <summary>
         /// 异常消息
         /// </summary>
+        [DataMember(Order = 2)]
         public string ErrorMessage
         {
             get
@@ -148,6 +152,7 @@ namespace Learn.Services
                 }
                 return string.Empty;
             }
+            protected set { }
         }
         /// <summary>
         /// 重写 ToString
@@ -175,7 +180,7 @@ namespace Learn.Services
             return sb.ToString().TrimEnd();
         }
 
-        private void AddError(string error,ref HashSet<string> val)
+        private void AddError(string error, ref HashSet<string> val)
         {
             val.Add(error);
         }
@@ -185,6 +190,7 @@ namespace Learn.Services
     /// </summary>
     /// <typeparam name="T">数据类型</typeparam>
     [Serializable]
+    [DataContract]
     public class DataResultDto<T> : ResultDto
     {
         /// <summary>
@@ -205,6 +211,7 @@ namespace Learn.Services
         /// <summary>
         /// 涉及的数据
         /// </summary>
+        [DataMember(Order = 5)]
         public T Data { get; set; }
     }
 }

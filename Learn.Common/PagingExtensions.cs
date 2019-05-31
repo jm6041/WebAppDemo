@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace System.Linq
 {
@@ -8,22 +9,27 @@ namespace System.Linq
     /// 分页参数
     /// </summary>
     [Serializable]
+    [DataContract]
     public class PageParameter
     {
         /// <summary>
         /// 加载数据的页号  从0开始
         /// </summary>
+        [DataMember(Order = 1)]
         public int PageIndex { get; set; }
 
         /// <summary>
         /// 页大小，默认 20
         /// </summary>
+        [DataMember(Order = 2)]
         public int PageSize { get; set; } = 20;
 
         /// <summary>
         /// 排序清单
         /// </summary>
+        [DataMember(Order = 3)]
         public ICollection<Ordering> Orderings { get; set; }
+
         /// <summary>
         /// 排序清单是否为空，不用前段传递值
         /// </summary>
@@ -38,17 +44,19 @@ namespace System.Linq
     /// </summary>
     /// <typeparam name="T">数据源类型</typeparam>
     [Serializable]
+    [DataContract]
     public class PagedResult<T>
     {
         /// <summary>
         /// 分页数据结果
         /// </summary>
+        [DataMember(Order = 1)]
         public IList<T> Result { get; set; }
 
         /// <summary>
         /// 数据总量
         /// </summary>
-
+        [DataMember(Order = 2)]
         public int ToltalCount { get; set; }
     }
 

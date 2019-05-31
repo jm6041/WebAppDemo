@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Learn.Clents;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,6 +28,24 @@ namespace WebAppClients
         {
             services.AddControllers()
                 .AddNewtonsoftJson();
+
+            services.AddSwaggerDocument(c =>
+            {
+                c.Title = "Test API SwaggerV2";
+                c.Version = "V1";
+                c.Description = "Test ASP.NET Core Web API";
+                c.DocumentName = "Document_SwaggerV2";
+            });
+
+            services.AddOpenApiDocument(c =>
+            {
+                c.Title = "Learn API OpenApiV3";
+                c.Version = "V1";
+                c.Description = "Learn ASP.NET Core Web API";
+                c.DocumentName = "Document_OpenApiV3";
+            });
+
+            services.AddHttpClient<GoodsClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +66,13 @@ namespace WebAppClients
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSwagger().UseSwaggerUi3(c =>
+            {
+                c.DocExpansion = "list";
+                c.DefaultModelExpandDepth = 3;
+                c.ValidateSpecification = true;
+            });
 
             app.UseEndpoints(endpoints =>
             {

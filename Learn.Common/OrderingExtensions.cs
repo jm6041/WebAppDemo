@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace System.Linq
 {
@@ -9,6 +10,7 @@ namespace System.Linq
     /// 排序顺序
     /// </summary>
     [Serializable]
+    [DataContract]
     public enum OrderingDirection
     {
         /// <summary>
@@ -24,15 +26,19 @@ namespace System.Linq
     /// 分页排序
     /// </summary>
     [Serializable]
+    [DataContract]
     public class Ordering
     {
         /// <summary>
         /// 排序属性、字段名
         /// </summary>
+        [DataMember(Order = 1)]
         public string Name { get; set; }
+
         /// <summary>
         /// 排序方向
         /// </summary>
+        [DataMember(Order = 2)]
         public OrderingDirection Direction { get; set; }
     }
 
