@@ -70,7 +70,7 @@ namespace Learn.Services
                             StartTime = d.StartTime,
                             EndTime = d.EndTime,
                         };
-            // datas = datas.OrderBy(x => x.Name).ThenBy(x => x.Price);
+            datas = datas.OrderBy(x => x.Name).ThenBy(x => x.Price);
             //var datas = _mapper.ProjectTo<GoodsDto>(sourceDatas);
             return datas;
         }
