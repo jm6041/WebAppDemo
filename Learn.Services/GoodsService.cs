@@ -71,7 +71,8 @@ namespace Learn.Services
                             EndTime = d.EndTime,
                         };
             Expression<Func<GoodsDto, string>> exp = x => x.Name;
-            datas = datas.OrderBy(x => x.Name).ThenBy(x => x.Price);
+            datas = datas.OrderBy<GoodsDto, string>(exp);
+            // datas = datas.OrderBy(x => x.Name).ThenBy(x => x.Price);
             //var datas = _mapper.ProjectTo<GoodsDto>(sourceDatas);
             return datas;
         }

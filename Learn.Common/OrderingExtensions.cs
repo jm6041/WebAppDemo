@@ -65,7 +65,7 @@ namespace System.Linq
         /// <typeparam name="T">数据源类型</typeparam>
         /// <param name="order">排序信息</param>
         /// <returns>Lambda表达式</returns>
-        private static LambdaExpression CreateExpression<T>(Ordering order)
+        private static LambdaExpression CreateMemberAccessExpression<T>(Ordering order)
         {
             // 根据排序的名字，找到数据源类型的对应的属性或者字段信息
             MemberInfo member = typeof(T).GetMember(order.Name, MemberTypes.Property | MemberTypes.Field, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public).FirstOrDefault();
@@ -113,15 +113,99 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// 创建排序表达式
+        /// </summary>
+        /// <typeparam name="T">数据源类型</typeparam>
+        /// <param name="memberType">排序字段类型</param>
+        /// <param name="order">排序信息</param>
+        /// <param name="orderMethod">排序方法名("OrderBy","ThenBy")</param>
+        /// <returns>Lambda表达式</returns>
+        private static LambdaExpression CreateOrderFuncExpression<T>(Type memberType, Ordering order, string orderMethod, Expression memberAccessExpression)
+        {
+            string funName = orderMethod;
+            if (order.Direction == OrderingDirection.Desc)
+            {
+                funName += "Descending";
+            }
+
+            // OrderBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
+            var orderMethodInfo = typeof(Queryable).GetMethods().FirstOrDefault(_ => _.Name == funName && _.GetParameters().Length == 2);
+
+            // (query, orderExpression) => query.OrderBy(orderExpression);
+            // var query = Expression.Parameter(typeof(IQueryable<T>), "query");
+            var orderExpressionType = typeof(Expression<>).MakeGenericType(typeof(Func<,>).MakeGenericType(typeof(T), memberType));
+            var orderExpression = Expression.Parameter(orderExpressionType, "orderExpression");
+            return Expression.Lambda(
+                Expression.Call(orderMethodInfo.MakeGenericMethod(typeof(T), memberType), orderExpression),
+                orderExpression);
+        }
+
+        /*public static LabelExpression DDD<T>()
+        {
+            string[] companies = { "Consolidated Messenger", "Alpine Ski House", "Southridge Video", "City Power & Light",
+                   "Coho Winery", "Wide World Importers", "Graphic Design Institute", "Adventure Works",
+                   "Humongous Insurance", "Woodgrove Bank", "Margie's Travel", "Northwind Traders",
+                   "Blue Yonder Airlines", "Trey Research", "The Phone Company",
+                   "Wingtip Toys", "Lucerne Publishing", "Fourth Coffee" };
+
+            companies.Where(company => (company.ToLower() == "coho winery" || company.Length > 16)).OrderBy(company => company);
+
+            // The IQueryable data to query.  
+            IQueryable<String> queryableData = companies.AsQueryable<string>();
+
+            // Compose the expression tree that represents the parameter to the predicate.  
+            ParameterExpression pe = Expression.Parameter(typeof(string), "company");
+
+            // ***** Where(company => (company.ToLower() == "coho winery" || company.Length > 16)) *****  
+            // Create an expression tree that represents the expression 'company.ToLower() == "coho winery"'.  
+            Expression left = Expression.Call(pe, typeof(string).GetMethod("ToLower", System.Type.EmptyTypes));
+            Expression right = Expression.Constant("coho winery");
+            Expression e1 = Expression.Equal(left, right);
+
+            // Create an expression tree that represents the expression 'company.Length > 16'.  
+            left = Expression.Property(pe, typeof(string).GetProperty("Length"));
+            right = Expression.Constant(16, typeof(int));
+            Expression e2 = Expression.GreaterThan(left, right);
+
+            // Combine the expression trees to create an expression tree that represents the  
+            // expression '(company.ToLower() == "coho winery" || company.Length > 16)'.  
+            Expression predicateBody = Expression.OrElse(e1, e2);
+
+            // Create an expression tree that represents the expression  
+            // 'queryableData.Where(company => (company.ToLower() == "coho winery" || company.Length > 16))'  
+            MethodCallExpression whereCallExpression = Expression.Call(
+                typeof(Queryable),
+                "Where",
+                new Type[] { queryableData.ElementType },
+                queryableData.Expression,
+                Expression.Lambda<Func<string, bool>>(predicateBody, new ParameterExpression[] { pe }));
+            // ***** End Where *****  
+
+            // ***** OrderBy(company => company) *****  
+            // Create an expression tree that represents the expression  
+            // 'whereCallExpression.OrderBy(company => company)'  
+            MethodCallExpression orderByCallExpression = Expression.Call(
+                typeof(Queryable),
+                "OrderBy",
+                new Type[] { queryableData.ElementType, queryableData.ElementType },
+                whereCallExpression,
+                Expression.Lambda<Func<string, string>>(pe, new ParameterExpression[] { pe }));
+            // ***** End OrderBy *****  
+
+            // Create an executable query from the expression tree.  
+            IQueryable<string> results = queryableData.Provider.CreateQuery<string>(orderByCallExpression);
+        }*/
+
+        /// <summary>
         /// 创建OrderBy处理委托，OrderBy(x => x.Value) 或者 OrderByDescending(x => x.Value)
         /// </summary>
         /// <typeparam name="T">数据源类型</typeparam>
         /// <param name="memberType">排序字段类型</param>
         /// <param name="order">排序信息</param>
         /// <returns>委托</returns>
-        private static Delegate CreateOrderByAction<T>(Type memberType, Ordering order)
+        private static Delegate CreateOrderByAction<T>(Type memberType, Ordering order, Expression memberAccessExpression)
         {
-            return CreateFuncExpression<T>(memberType, order, "OrderBy").Compile();
+            return CreateOrderFuncExpression<T>(memberType, order, "OrderBy", memberAccessExpression).Compile();
         }
 
         /// <summary>
@@ -131,9 +215,9 @@ namespace System.Linq
         /// <param name="memberType">排序字段类型</param>
         /// <param name="order">排序信息</param>
         /// <returns>委托</returns>
-        private static Delegate CreateThenByAction<T>(Type memberType, Ordering order)
+        private static Delegate CreateThenByAction<T>(Type memberType, Ordering order, Expression memberAccessExpression)
         {
-            return CreateFuncExpression<T>(memberType, order, "ThenBy").Compile();
+            return CreateOrderFuncExpression<T>(memberType, order, "ThenBy", memberAccessExpression).Compile();
         }
 
         /// <summary>
@@ -158,15 +242,27 @@ namespace System.Linq
             // 尝试从缓存中加载，不存在时创建
             if (!_nameMemberExpressionCache.TryGetValue(key, out LambdaExpression expression))
             {
-                expression = CreateExpression<T>(order);
+                expression = CreateMemberAccessExpression<T>(order);
                 _nameMemberExpressionCache = _nameMemberExpressionCache.Add(key, expression);
             }
-            if (!_orderByActionCache.TryGetValue(key, out Delegate action))
-            {
-                action = CreateOrderByAction<T>(expression.ReturnType, order);
-                _orderByActionCache = _orderByActionCache.Add(key, action);
-            }
+            var action = expression.Compile();
             return (IOrderedQueryable<T>)action.DynamicInvoke(query, expression);
+            //Expression<Func<T, dynamic>> e = (Expression<Func<T, dynamic>>)expression;
+            //if (order.Direction == OrderingDirection.Asc)
+            //{
+
+            //    return query.OrderBy(e);
+            //}
+            //else
+            //{
+            //    return query.OrderByDescending(e);
+            //}
+            //if (!_orderByActionCache.TryGetValue(key, out Delegate action))
+            //{
+            //    action = CreateOrderByAction<T>(expression.ReturnType, order, expression);
+            //    _orderByActionCache = _orderByActionCache.Add(key, action);
+            //}
+            //return (IOrderedQueryable<T>)action.DynamicInvoke(query, expression);
         }
 
         /// <summary>
@@ -191,15 +287,24 @@ namespace System.Linq
             // 尝试从缓存中加载，不存在时创建
             if (!_nameMemberExpressionCache.TryGetValue(key, out LambdaExpression expression))
             {
-                expression = CreateExpression<T>(order);
+                expression = CreateMemberAccessExpression<T>(order);
                 _nameMemberExpressionCache = _nameMemberExpressionCache.Add(key, expression);
             }
-            if (!_thenByActionCache.TryGetValue(key, out Delegate action))
+            Expression<Func<T, dynamic>> e = (Expression<Func<T, dynamic>>)expression;
+            if (order.Direction == OrderingDirection.Asc)
             {
-                action = CreateThenByAction<T>(expression.ReturnType, order);
-                _thenByActionCache = _thenByActionCache.Add(key, action);
+                return query.ThenBy(e);
             }
-            return (IOrderedQueryable<T>)action.DynamicInvoke(query, expression);
+            else
+            {
+                return query.ThenByDescending(e);
+            }
+            //if (!_thenByActionCache.TryGetValue(key, out Delegate action))
+            //{
+            //    action = CreateThenByAction<T>(expression.ReturnType, order, expression);
+            //    _thenByActionCache = _thenByActionCache.Add(key, action);
+            //}
+            //return (IOrderedQueryable<T>)action.DynamicInvoke(query, expression);
         }
 
         /// <summary>
