@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Learn.Services
@@ -8,10 +10,12 @@ namespace Learn.Services
     public class GoodsService : IGoodsService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public GoodsService(ApplicationDbContext context)
+        public GoodsService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<PagedResult<GoodsDto>> GetGoodsAsync(GoodsQueryDto queryDto)
@@ -66,6 +70,9 @@ namespace Learn.Services
                             StartTime = d.StartTime,
                             EndTime = d.EndTime,
                         };
+            Expression<Func<GoodsDto, string>> exp = x => x.Name;
+            datas = datas.OrderBy(x => x.Name).ThenBy(x => x.Price);
+            //var datas = _mapper.ProjectTo<GoodsDto>(sourceDatas);
             return datas;
         }
         private ResultDto ValidInput(GoodsInDto d)
@@ -97,24 +104,6 @@ namespace Learn.Services
             return r;
         }
 
-        private Goods SetData(Goods m, GoodsInDto d)
-        {
-            string currency = d.Currency;
-
-            m.Name = d.Name;
-            m.Pricing = d.Pricing;
-            m.Words = d.Words;
-            m.Days = d.Days;
-            m.InitPrice = d.InitPrice;
-            m.Price = d.Price;
-            m.CurrencySymbol = d.CurrencySymbol;
-            m.Currency = d.Currency;
-            m.Description = d.Description;
-            m.StartTime = d.StartTime;
-            m.EndTime = d.EndTime;
-            return m;
-        }
-
         public async Task<DataResultDto<Guid?>> AddAsync(GoodsInDto d)
         {
             DataResultDto<Guid?> rd = new DataResultDto<Guid?>();
@@ -124,12 +113,12 @@ namespace Learn.Services
                 rd.Merge(vr);
                 return rd;
             }
-            Goods m = new Goods()
+            Goods m = new Goods
             {
                 Id = Guid.NewGuid(),
-                CreateTime = DateTimeOffset.Now,
+                CreateTime = DateTimeOffset.UtcNow,
             };
-            SetData(m, d);
+            _mapper.Map(m, d);
             await _context.Goods.AddAsync(m);
             await _context.SaveChangesAsync();
             rd.Data = m.Id;
@@ -156,7 +145,7 @@ namespace Learn.Services
                 r.AddError("Goods", "没有对应的数据");
                 return r;
             }
-            SetData(m, d);
+            _mapper.Map(d, m);
             await _context.SaveChangesAsync();
             return r;
         }

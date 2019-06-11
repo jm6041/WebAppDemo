@@ -6,11 +6,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlserver" Version="3.0.0-preview5.19227.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Learn.Services.Abstractions\Learn.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\Learn.Services\Learn.Services.csproj" />
   </ItemGroup>
 
 </Project>

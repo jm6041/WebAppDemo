@@ -43,5 +43,15 @@ namespace WebAppDemo.Controllers
             }
             return await _goodsService.GetGoodsByIdAsync(id);
         }
+
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns></returns>
+        public async Task<ResultDto> UpdateAsync([FromBody]GoodsInDto d)
+        {
+            return await _goodsService.UpdateAsync(d);
+        }
     }
 }

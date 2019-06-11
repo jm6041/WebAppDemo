@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Learn.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,8 @@ namespace WebAppDemo
             string connectionString = Configuration.GetConnectionString(Configuration.GetSection("db:ConnectionName")?.Value ?? "DefaultConnection");
             string assemblyFullName = this.GetType().Assembly.FullName;
             services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(connectionString, b => b.MigrationsAssembly(assemblyFullName)));
+
+            services.AddAutoMapper(Learn.Mappers.AssemblyInfo.Assembly);
 
             services.AddControllers()
                 .AddNewtonsoftJson();
