@@ -251,7 +251,6 @@ namespace System.Linq
             {
                 methodInfo = OrderByDescendingMethodInfo;
             }
-
             Type p1 = typeof(T);
             Type p2 = expression.ReturnType;
             methodInfo = methodInfo.MakeGenericMethod(p1, p2);

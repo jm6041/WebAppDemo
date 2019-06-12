@@ -70,7 +70,7 @@ namespace Learn.Services
                             StartTime = d.StartTime,
                             EndTime = d.EndTime,
                         };
-            //Expression<Func<GoodsDto, double>> exp = _ => _.Price;
+            Expression<Func<GoodsDto, double>> exp = _ => _.Price;
 
             //datas = Queryable.OrderByDescending(datas, exp);
             //datas = datas.OrderBy(x => x.Name).ThenBy(x => x.Price);
