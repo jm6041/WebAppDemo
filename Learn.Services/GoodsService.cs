@@ -50,7 +50,7 @@ namespace Learn.Services
                 }
                 if (queryDto.OrderingsIsNullOrEmpty())
                 {
-                    sourceDatas = sourceDatas.OrderByDescending(x => x.CreateTime);
+                    //sourceDatas = sourceDatas.OrderByDescending(x => x.CreateTime);
                 }
             }
             var datas = from d in sourceDatas
@@ -70,7 +70,10 @@ namespace Learn.Services
                             StartTime = d.StartTime,
                             EndTime = d.EndTime,
                         };
-            datas = datas.OrderBy(x => x.Name).ThenBy(x => x.Price);
+            //Expression<Func<GoodsDto, double>> exp = _ => _.Price;
+
+            //datas = Queryable.OrderByDescending(datas, exp);
+            //datas = datas.OrderBy(x => x.Name).ThenBy(x => x.Price);
             //var datas = _mapper.ProjectTo<GoodsDto>(sourceDatas);
             return datas;
         }

@@ -52,6 +52,9 @@ namespace System.Linq
         // 名字对应成员缓存表达式
         private static ImmutableDictionary<(Type Type, string Name, OrderingDirection Direction), LambdaExpression> _nameMemberExpressionCache
             = ImmutableDictionary<(Type Type, string Name, OrderingDirection Direction), LambdaExpression>.Empty;
+        // 名字访问成员缓存表达式
+        private static ImmutableDictionary<(Type Type, string Name), LambdaExpression> _nameMemberAccessExpressionCache
+            = ImmutableDictionary<(Type Type, string Name), LambdaExpression>.Empty;
         //// OrderBy委托缓存
         //private static ImmutableDictionary<(Type Type, string Name, OrderingDirection Direction), Delegate> _orderByActionCache
         //    = ImmutableDictionary<(Type Type, string Name, OrderingDirection Direction), Delegate>.Empty;
@@ -72,6 +75,29 @@ namespace System.Linq
             if (member == null)
             {
                 throw new InvalidProgramException("Not found the member: " + order.Name + " in " + typeof(T).FullName);
+            }
+            // 属性或者字段的类型
+            var memberType = member is PropertyInfo ? ((PropertyInfo)member).PropertyType : ((FieldInfo)member).FieldType;
+            var delegateType = typeof(Func<,>).MakeGenericType(typeof(T), memberType);
+            var parameter = Expression.Parameter(typeof(T), "_");
+            return Expression.Lambda(
+                delegateType,
+                Expression.MakeMemberAccess(parameter, member),
+                parameter);
+        }
+        /// <summary>
+        /// 创建Lambda表达式"_ => _.Name"
+        /// </summary>
+        /// <typeparam name="T">数据源类型</typeparam>
+        /// <param name="order">排序信息</param>
+        /// <returns>Lambda表达式</returns>
+        private static LambdaExpression CreateMemberAccessExpression<T>(string name)
+        {
+            // 根据排序的名字，找到数据源类型的对应的属性或者字段信息
+            MemberInfo member = typeof(T).GetMember(name, MemberTypes.Property | MemberTypes.Field, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public).FirstOrDefault();
+            if (member == null)
+            {
+                throw new InvalidProgramException("Not found the member: " + name + " in " + typeof(T).FullName);
             }
             // 属性或者字段的类型
             var memberType = member is PropertyInfo ? ((PropertyInfo)member).PropertyType : ((FieldInfo)member).FieldType;
@@ -163,6 +189,23 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// 创建OrderBy处理委托，OrderBy(x => x.Value) 或者 OrderByDescending(x => x.Value)
+        /// </summary>
+        /// <typeparam name="T">数据源类型</typeparam>
+        /// <param name="memberType">排序字段类型</param>
+        /// <param name="order">排序信息</param>
+        /// <returns>委托</returns>
+        private static Delegate GetOrderByAction<T>(Type memberType, Ordering order, Expression query, Expression memberAccessExpression)
+        {
+            return CreateOrderByExpression<T>(memberType, order, query, memberAccessExpression).Compile();
+        }
+
+        private static MethodInfo OrderByMethodInfo = typeof(Queryable).GetMethods().FirstOrDefault(_ => _.Name == nameof(Queryable.OrderBy) && _.GetParameters().Length == 2);
+        private static MethodInfo OrderByDescendingMethodInfo = typeof(Queryable).GetMethods().FirstOrDefault(_ => _.Name == nameof(Queryable.OrderByDescending) && _.GetParameters().Length == 2);
+        private static MethodInfo ThenByMethodInfo = typeof(Queryable).GetMethods().FirstOrDefault(_ => _.Name == nameof(Queryable.ThenBy) && _.GetParameters().Length == 2);
+        private static MethodInfo ThenByDescendingMethodInfo = typeof(Queryable).GetMethods().FirstOrDefault(_ => _.Name == nameof(Queryable.ThenByDescending) && _.GetParameters().Length == 2);
+
+        /// <summary>
         /// 创建ThenBy排序处理委托，ThenBy(x => x.Value) 或者 ThenByDescending(x => x.Value)
         /// </summary>
         /// <typeparam name="T">数据源类型</typeparam>
@@ -192,21 +235,36 @@ namespace System.Linq
             {
                 throw new ArgumentNullException(nameof(order));
             }
-            (Type Type, string Name, OrderingDirection Direction) key = (typeof(T), order.Name.ToUpper(), order.Direction);
+            (Type Type, string Name) key = (typeof(T), order.Name.ToUpper());
             // 尝试从缓存中加载，不存在时创建
-            if (!_nameMemberExpressionCache.TryGetValue(key, out LambdaExpression expression))
+            if (!_nameMemberAccessExpressionCache.TryGetValue(key, out LambdaExpression expression))
             {
-                expression = CreateMemberAccessExpression<T>(order);
-                _nameMemberExpressionCache = _nameMemberExpressionCache.Add(key, expression);
+                expression = CreateMemberAccessExpression<T>(order.Name);
+                _nameMemberAccessExpressionCache = _nameMemberAccessExpressionCache.Add(key, expression);
             }
+            MethodInfo methodInfo;
+            if (order.Direction == OrderingDirection.Asc)
+            {
+                methodInfo = OrderByMethodInfo;
+            }
+            else
+            {
+                methodInfo = OrderByDescendingMethodInfo;
+            }
+
+            Type p1 = typeof(T);
+            Type p2 = expression.ReturnType;
+            methodInfo = methodInfo.MakeGenericMethod(p1, p2);
+            object[] parameters = { query, expression };
+            return (IOrderedQueryable<T>)methodInfo.Invoke(null, parameters);
             //if (!_orderByActionCache.TryGetValue(key, out Delegate action))
             //{
             //    action = CreateOrderByAction<T>(expression.ReturnType, order, query.Expression, expression);
             //    _orderByActionCache = _orderByActionCache.Add(key, action);
             //}
-            var action = CreateOrderByAction<T>(expression.ReturnType, order, query.Expression, expression);
+            //var action = CreateOrderByAction<T>(expression.ReturnType, order, query.Expression, expression);
             //return (IOrderedQueryable<T>)query.Provider.CreateQuery(expression);
-            return (IOrderedQueryable<T>)action.DynamicInvoke();
+            //return (IOrderedQueryable<T>)action.DynamicInvoke();
         }
 
         /// <summary>
@@ -227,20 +285,34 @@ namespace System.Linq
             {
                 throw new ArgumentNullException(nameof(order));
             }
-            (Type Type, string Name, OrderingDirection Direction) key = (typeof(T), order.Name.ToUpper(), order.Direction);
+            (Type Type, string Name) key = (typeof(T), order.Name.ToUpper());
             // 尝试从缓存中加载，不存在时创建
-            if (!_nameMemberExpressionCache.TryGetValue(key, out LambdaExpression expression))
+            if (!_nameMemberAccessExpressionCache.TryGetValue(key, out LambdaExpression expression))
             {
-                expression = CreateMemberAccessExpression<T>(order);
-                _nameMemberExpressionCache = _nameMemberExpressionCache.Add(key, expression);
+                expression = CreateMemberAccessExpression<T>(order.Name);
+                _nameMemberAccessExpressionCache = _nameMemberAccessExpressionCache.Add(key, expression);
             }
+            MethodInfo methodInfo;
+            if (order.Direction == OrderingDirection.Asc)
+            {
+                methodInfo = ThenByMethodInfo;
+            }
+            else
+            {
+                methodInfo = ThenByDescendingMethodInfo;
+            }
+            Type p1 = typeof(T);
+            Type p2 = expression.ReturnType;
+            methodInfo = methodInfo.MakeGenericMethod(p1, p2);
+            object[] parameters = { query, expression };
+            return (IOrderedQueryable<T>)methodInfo.Invoke(null, parameters);
             //if (!_thenByActionCache.TryGetValue(key, out Delegate action))
             //{
             //    action = CreateThenByAction<T>(expression.ReturnType, order, query.Expression, expression);
             //    _thenByActionCache = _thenByActionCache.Add(key, action);
             //}
-            var action = CreateThenByAction<T>(expression.ReturnType, order, query.Expression, expression);
-            return (IOrderedQueryable<T>)action.DynamicInvoke();
+            //var action = CreateThenByAction<T>(expression.ReturnType, order, query.Expression, expression);
+            //return (IOrderedQueryable<T>)action.DynamicInvoke();
             //return (IOrderedQueryable<T>)query.Provider.CreateQuery(expression);
         }
 
